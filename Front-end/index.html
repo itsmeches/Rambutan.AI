@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rambutan Classifier</title>
   <link rel="stylesheet" href="style.css" />
+  
 </head>
 <body>
   <!-- Navbar -->
@@ -43,7 +44,7 @@
     <section class="panel">
       <h2>2️ Heatmap</h2>
       <button id="toggleHeatmap">Toggle Heatmap</button>
-      <div class="heatmap-preview" id="heatmapPreview">
+      <div class="heatmap-preview hidden" id="heatmapPreview">
         <img id="heatmapImg" src="placeholder-heatmap.png" alt="Heatmap Preview" />
       </div>
     </section>
@@ -55,8 +56,14 @@
       <div class="slider-container">
         <label>Rotten:</label>
         <input type="range" id="rottenSlider" min="0" max="100" value="50" disabled />
+        <label>Ripe:</label>
+        <input type="range" id="ripeSlider" min="0" max="100" value="40" disabled />
+        <label>Raw:</label>
+        <input type="range" id="rawSlider" min="0" max="100" value="40" disabled />
         <label>Towards Decay:</label>
-        <input type="range" id="decaySlider" min="0" max="100" value="40" disabled />
+        <input type="range" id="towardsdecaySlider" min="0" max="100" value="40" disabled />
+        <label>Towards ripe:</label>
+        <input type="range" id="towardsripeSlider" min="0" max="100" value="40" disabled />
       </div>
       <div class="insight-text">
         <p id="aiInsight"><strong>AI Insight:</strong> This rambutan is likely in the early stage of decay.</p>

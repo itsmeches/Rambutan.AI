@@ -490,3 +490,16 @@ h2 {
     transform: translateY(0);
   }
 }
+
+
+
+.hidden {
+  display: none;
+  }
+.heatmap-preview img {
+      width: 100%;
+      max-width: 300px;
+      margin-top: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+}

@@ -4,12 +4,14 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import io
-import os  # Added to help with file checks
+import os
+import cv2
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
-# Debug info: print current working directory
+# Debug info
 print("📂 Current working directory:", os.getcwd())
 
 # Model path and existence check
@@ -27,12 +29,33 @@ except Exception as e:
     print(f"❌ Error loading model: {str(e)}")
     model = None
 
-# Sample class names - make sure these match your model output
+# Sample class names
 class_names = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe']
 
-@app.route('/', methods=['GET'])
-def home():
-    return 'Flask API is working!'
+# Grad-CAM utility functions
+def grad_cam(input_model, image, layer_name="block_16_project_BN"):
+    grad_model = tf.keras.models.Model(
+        inputs=[input_model.input],
+        outputs=[input_model.get_layer(layer_name).output, input_model.output]
+    )
+    with tf.GradientTape() as tape:
+        tape.watch(image)
+        conv_output, predictions = grad_model(image)
+        predicted_class = tf.argmax(predictions[0])
+        grads = tape.gradient(predictions[0][predicted_class], conv_output)
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+    conv_output = conv_output[0]
+    heatmap = tf.reduce_sum(conv_output * pooled_grads, axis=-1)
+    heatmap = tf.maximum(heatmap, 0)
+    heatmap /= tf.reduce_max(heatmap)
+    return heatmap.numpy()
+
+def overlay_heatmap(image_np, heatmap, alpha=0.4):
+    heatmap_resized = cv2.resize(heatmap, (image_np.shape[1], image_np.shape[0]))
+    heatmap_colored = cv2.applyColorMap(np.uint8(255 * heatmap_resized), cv2.COLORMAP_JET)
+    image_inverted = cv2.bitwise_not(image_np)
+    overlayed = cv2.addWeighted(image_inverted, 1 - alpha, heatmap_colored, alpha, 0)
+    return overlayed
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -49,10 +72,10 @@ def predict():
     try:
         image = Image.open(file).convert('RGB')
         image = image.resize((224, 224))
-        image_array = np.array(image) / 255.0
-        image_array = np.expand_dims(image_array, axis=0)
+        image_array = np.array(image)
+        image_input = np.expand_dims(image_array / 255.0, axis=0)
 
-        predictions = model.predict(image_array)
+        predictions = model.predict(image_input)
         print("Prediction raw output:", predictions)
 
         if len(class_names) != predictions.shape[1]:
@@ -63,12 +86,28 @@ def predict():
         predicted_index = np.argmax(predictions)
         predicted_label = class_names[predicted_index]
 
-        return jsonify({'prediction': predicted_label})
+        # Convert raw predictions to list of floats
+        probabilities = predictions[0].tolist()
+
+        # Generate Grad-CAM
+        heatmap = grad_cam(model, tf.convert_to_tensor(image_input, dtype=tf.float32))
+        overlayed_image = overlay_heatmap(image_array, heatmap)
+
+        # Ensure static folder exists
+        os.makedirs('static', exist_ok=True)
+        heatmap_path = 'static/heatmap.jpg'
+        cv2.imwrite(heatmap_path, overlayed_image)
+
+        return jsonify({
+            'prediction': predicted_label,
+            'probabilities': probabilities,
+            'heatmap_url': heatmap_path
+        })
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Print all routes for debugging
+# Debug: print all registered routes
 print("🔗 Registered routes:")
 print(app.url_map)
 
