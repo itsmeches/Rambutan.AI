@@ -8,17 +8,18 @@ const heatmapPreview = document.getElementById('heatmapPreview');
 const toggleHeatmapBtn = document.getElementById('toggleHeatmap');
 const mobileMenu = document.getElementById('mobile-menu');
 const navLinks = document.getElementById('nav-links');
+const aiInsight = document.getElementById('aiInsight');
 
 let selectedFile = null;
 
-// Mobile navbar toggle
-mobileMenu.addEventListener('click', () => {
-  navLinks.classList.toggle('show');
+// 🍔 Toggle mobile menu
+mobileMenu?.addEventListener('click', () => {
+  navLinks?.classList.toggle('show');
 });
 
-// Image preview
-imageUpload.addEventListener('change', () => {
-  selectedFile = imageUpload.files[0];
+// 📸 Handle image preview
+imageUpload?.addEventListener('change', () => {
+  selectedFile = imageUpload.files?.[0];
 
   if (selectedFile) {
     const reader = new FileReader();
@@ -27,12 +28,12 @@ imageUpload.addEventListener('change', () => {
     };
     reader.readAsDataURL(selectedFile);
   } else {
-    imagePreview.innerHTML = '<span>No image selected</span>';
+    resetPreview();
   }
 });
 
-// Classification and Grad-CAM request
-classifyBtn.addEventListener('click', () => {
+// 🧠 Handle image classification
+classifyBtn?.addEventListener('click', async () => {
   if (!selectedFile) {
     alert('Please upload an image first.');
     return;
@@ -40,76 +41,83 @@ classifyBtn.addEventListener('click', () => {
 
   resultDiv.innerHTML = '🔍 Classifying...';
 
-  const formData = new FormData();
-  formData.append('image', selectedFile);
+  try {
+    const formData = new FormData();
+    formData.append('image', selectedFile);
 
-  fetch('http://localhost:5000/predict', {
-    method: 'POST',
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.prediction) {
-        resultDiv.innerHTML = `✅ Prediction: <strong>${data.prediction}</strong>`;
-      }
-
-      if (data.probabilities) {
-        updateSlidersAndInsights(data.probabilities);
-      }
-
-      if (data.heatmap_url) {
-        heatmapImg.src = `http://localhost:5000/${data.heatmap_url}?t=${new Date().getTime()}`;
-      } else {
-        console.error('No heatmap returned from backend.');
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      resultDiv.innerHTML = '❌ Failed to classify image.';
+    const res = await fetch('http://localhost:5000/predict', {
+      method: 'POST',
+      body: formData
     });
+
+    const data = await res.json();
+
+    if (data.prediction) {
+      resultDiv.innerHTML = `✅ Prediction: <strong>${data.prediction}</strong>`;
+    }
+
+    if (Array.isArray(data.probabilities)) {
+      updateSlidersAndInsights(data.probabilities);
+    }
+
+    if (data.heatmap_url) {
+      heatmapImg.src = `http://localhost:5000/${data.heatmap_url}?t=${Date.now()}`;
+    } else {
+      console.error('No heatmap returned.');
+    }
+  } catch (err) {
+    console.error(err);
+    resultDiv.innerHTML = '❌ Failed to classify image.';
+  }
 });
 
-// Toggle heatmap visibility
-toggleHeatmapBtn.addEventListener('click', () => {
-  heatmapPreview.classList.toggle('hidden');
+// 🔥 Toggle heatmap visibility
+toggleHeatmapBtn?.addEventListener('click', () => {
+  heatmapPreview?.classList.toggle('hidden');
 });
 
-// Clear inputs
-removeBtn.addEventListener('click', () => {
+// ❌ Remove/reset inputs
+removeBtn?.addEventListener('click', resetAll);
+
+// 🔁 Reset all UI elements
+function resetAll() {
   selectedFile = null;
   imageUpload.value = '';
-  imagePreview.innerHTML = '<span>No image selected</span>';
+  resetPreview();
   resultDiv.innerHTML = 'Prediction will appear here.';
   heatmapImg.src = 'placeholder-heatmap.png';
   heatmapPreview.classList.add('hidden');
+  aiInsight.innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
 
-  // Reset sliders and insight
-  ['rottenSlider', 'ripeSlider', 'rawSlider', 'towardsdecaySlider', 'towardsripeSlider'].forEach(id => {
+  const sliderIDs = ['rottenSlider', 'ripeSlider', 'rawSlider', 'towardsdecaySlider', 'towardsripeSlider'];
+  sliderIDs.forEach(id => {
     const slider = document.getElementById(id);
-    if (slider) slider.value = 0;
-
-    const label = slider?.previousElementSibling;
-    if (label) label.innerText = label.innerText.split(':')[0] + ': 0%';
+    if (slider) {
+      slider.value = 0;
+      const label = slider.previousElementSibling;
+      if (label) label.innerText = label.innerText.split(':')[0] + ': 0%';
+    }
   });
+}
 
-  document.getElementById("aiInsight").innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
-});
+// 🔍 Reset preview
+function resetPreview() {
+  imagePreview.innerHTML = '<span>No image selected</span>';
+}
 
-// Function to update sliders and confidence levels
+// 📊 Update sliders and AI insight
 function updateSlidersAndInsights(probabilities) {
-  const classNames = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe'];
-
-  const sliders = {
-    'Rotten': document.getElementById('rottenSlider'),
-    'Ripe': document.getElementById('ripeSlider'),
-    'Raw': document.getElementById('rawSlider'),
-    'Towards_Decay': document.getElementById('towardsdecaySlider'),
-    'Towards_Ripe': document.getElementById('towardsripeSlider'),
+  const classMap = {
+    Rotten: 'rottenSlider',
+    Ripe: 'ripeSlider',
+    Raw: 'rawSlider',
+    Towards_Decay: 'towardsdecaySlider',
+    Towards_Ripe: 'towardsripeSlider'
   };
 
-  classNames.forEach((label, i) => {
-    const percent = Math.round(probabilities[i] * 100);
-    const slider = sliders[label];
+  Object.entries(classMap).forEach(([label, id], index) => {
+    const percent = Math.round(probabilities[index] * 100);
+    const slider = document.getElementById(id);
     if (slider) {
       slider.value = percent;
       const labelElem = slider.previousElementSibling;
@@ -119,9 +127,9 @@ function updateSlidersAndInsights(probabilities) {
     }
   });
 
-  // Show insight
   const maxIndex = probabilities.indexOf(Math.max(...probabilities));
-  const predictedLabel = classNames[maxIndex];
+  const bestLabel = Object.keys(classMap)[maxIndex];
   const confidence = Math.round(probabilities[maxIndex] * 100);
-  document.getElementById("aiInsight").innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${predictedLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
+
+  aiInsight.innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
 }

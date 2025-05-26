@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rambutan Classifier</title>
   <link rel="stylesheet" href="style.css" />
-  
 </head>
 <body>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="logo">🍈 RambutanAI</div>
-      <div class="menu-toggle" id="mobile-menu">&#9776;</div>
+      <div class="logo" aria-label="Rambutan AI Home">🍈 RambutanAI</div>
+      <button class="menu-toggle" id="mobile-menu" aria-label="Toggle navigation">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="how-it-works.html">How it Works</a></li>
@@ -22,53 +22,61 @@
     </div>
   </nav>
 
-  <!-- Classifier Layout -->
+  <!-- Main Content -->
   <main class="grid-container">
+
     <!-- Upload Section -->
-    <section class="panel">
-      <h2>1️ Upload Image</h2>
+    <section class="panel" aria-labelledby="upload-heading">
+      <h2 id="upload-heading">1️ Upload Image</h2>
       <label for="imageUpload" class="upload-label">
-        Upload Image
+        Choose Image
         <input type="file" id="imageUpload" accept="image/*" hidden />
       </label>
-      <div class="image-preview" id="imagePreview">
+      <div class="image-preview" id="imagePreview" aria-live="polite">
         <span>No image selected</span>
       </div>
       <div class="btn-group">
-        <button id="classifyBtn">Classify</button>
-        <button id="removeBtn">Clear</button>
+        <button id="classifyBtn" aria-label="Classify Image">Classify</button>
+        <button id="removeBtn" aria-label="Clear Image and Reset">Clear</button>
       </div>
     </section>
 
     <!-- Heatmap Section -->
-    <section class="panel">
-      <h2>2️ Heatmap</h2>
-      <button id="toggleHeatmap">Toggle Heatmap</button>
+    <section class="panel" aria-labelledby="heatmap-heading">
+      <h2 id="heatmap-heading">2️ Heatmap</h2>
+      <button id="toggleHeatmap" aria-expanded="false">Toggle Heatmap</button>
       <div class="heatmap-preview hidden" id="heatmapPreview">
-        <img id="heatmapImg" src="placeholder-heatmap.png" alt="Heatmap Preview" />
+        <img id="heatmapImg" src="placeholder-heatmap.png" alt="Grad-CAM Heatmap Preview" />
       </div>
     </section>
 
     <!-- Insights Section -->
-    <section class="panel">
-      <h2>3️ Insights</h2>
-      <div id="result">Prediction will appear here.</div>
+    <section class="panel" aria-labelledby="insights-heading">
+      <h2 id="insights-heading">3️ Insights</h2>
+      <div id="result" aria-live="polite">Prediction will appear here.</div>
+
       <div class="slider-container">
-        <label>Rotten:</label>
-        <input type="range" id="rottenSlider" min="0" max="100" value="50" disabled />
-        <label>Ripe:</label>
-        <input type="range" id="ripeSlider" min="0" max="100" value="40" disabled />
-        <label>Raw:</label>
-        <input type="range" id="rawSlider" min="0" max="100" value="40" disabled />
-        <label>Towards Decay:</label>
-        <input type="range" id="towardsdecaySlider" min="0" max="100" value="40" disabled />
-        <label>Towards ripe:</label>
-        <input type="range" id="towardsripeSlider" min="0" max="100" value="40" disabled />
+        <label for="rottenSlider">Rotten:</label>
+        <input type="range" id="rottenSlider" min="0" max="100" value="0" disabled />
+
+        <label for="ripeSlider">Ripe:</label>
+        <input type="range" id="ripeSlider" min="0" max="100" value="0" disabled />
+
+        <label for="rawSlider">Raw:</label>
+        <input type="range" id="rawSlider" min="0" max="100" value="0" disabled />
+
+        <label for="towardsdecaySlider">Towards Decay:</label>
+        <input type="range" id="towardsdecaySlider" min="0" max="100" value="0" disabled />
+
+        <label for="towardsripeSlider">Towards Ripe:</label>
+        <input type="range" id="towardsripeSlider" min="0" max="100" value="0" disabled />
       </div>
+
       <div class="insight-text">
-        <p id="aiInsight"><strong>AI Insight:</strong> This rambutan is likely in the early stage of decay.</p>
+        <p id="aiInsight"><strong>AI Insight:</strong> Awaiting classification...</p>
       </div>
     </section>
+
   </main>
 
   <script src="script.js"></script>
