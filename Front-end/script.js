@@ -116,7 +116,7 @@ function resetAll() {
   croppedPreview.classList.add('hidden');
   result.innerHTML = 'Prediction will appear here.';
   heatmapImg.src = 'placeholder-heatmap.png';
-  heatmapPreview.classList.add('hidden'); // ✅ FIXED
+  heatmapPreview.classList.add('hidden'); 
   aiInsight.innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
 
   const sliderIDs = ['rottenSlider', 'ripeSlider', 'rawSlider', 'towardsdecaySlider', 'towardsripeSlider'];
