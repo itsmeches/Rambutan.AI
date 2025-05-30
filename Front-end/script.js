@@ -138,22 +138,20 @@ function resetAll() {
 // 📊 Update sliders and AI insight
 function updateSlidersAndInsights(probabilities) {
   const classMap = {
-    Rotten: 'rottenSlider',
-    Ripe: 'ripeSlider',
-    Raw: 'rawSlider',
-    Towards_Decay: 'towardsdecaySlider',
-    Towards_Ripe: 'towardsripeSlider'
+    Rotten: ['rottenSlider', 'rottenLabel'],
+    Ripe: ['ripeSlider', 'ripeLabel'],
+    Raw: ['rawSlider', 'rawLabel'],
+    Towards_Decay: ['towardsdecaySlider', 'towardsdecayLabel'],
+    Towards_Ripe: ['towardsripeSlider', 'towardsripeLabel']
   };
 
-  Object.entries(classMap).forEach(([label, id], index) => {
+  Object.entries(classMap).forEach(([label, [sliderId, labelId]], index) => {
     const percent = Math.round(probabilities[index] * 100);
-    const slider = document.getElementById(id);
-    if (slider) {
+    const slider = document.getElementById(sliderId);
+    const labelElem = document.getElementById(labelId);
+    if (slider && labelElem) {
       slider.value = percent;
-      const labelElem = slider.previousElementSibling;
-      if (labelElem) {
-        labelElem.innerText = `${label.replace('_', ' ')}: ${percent}%`;
-      }
+      labelElem.innerText = `${label.replace('_', ' ')}: ${percent}%`;
     }
   });
 
@@ -161,7 +159,6 @@ function updateSlidersAndInsights(probabilities) {
   const bestLabel = Object.keys(classMap)[maxIndex];
   const confidence = Math.round(probabilities[maxIndex] * 100);
 
-  if (aiInsight) {
-    aiInsight.innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
-  }
+  aiInsight.innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
 }
+

@@ -57,12 +57,27 @@
       <h2>4. Insights</h2>
       <div id="result">Prediction will appear here.</div>
       <div class="slider-container">
-        <label>Rotten: <input type="range" id="rottenSlider" min="0" max="100" disabled /></label>
-        <label>Ripe: <input type="range" id="ripeSlider" min="0" max="100" disabled /></label>
-        <label>Raw: <input type="range" id="rawSlider" min="0" max="100" disabled /></label>
-        <label>Towards Decay: <input type="range" id="towardsdecaySlider" min="0" max="100" disabled /></label>
-        <label>Towards Ripe: <input type="range" id="towardsripeSlider" min="0" max="100" disabled /></label>
-      </div>
+            <div class="slider-row">
+              <label for="rottenSlider" id="rottenLabel">Rotten: 0%</label>
+              <input type="range" id="rottenSlider" min="0" max="100" disabled />
+            </div>
+            <div class="slider-row">
+              <label for="ripeSlider" id="ripeLabel">Ripe: 0%</label>
+              <input type="range" id="ripeSlider" min="0" max="100" disabled />
+            </div>
+            <div class="slider-row">
+              <label for="rawSlider" id="rawLabel">Raw: 0%</label>
+              <input type="range" id="rawSlider" min="0" max="100" disabled />
+            </div>
+            <div class="slider-row">
+              <label for="towardsdecaySlider" id="towardsdecayLabel">Towards Decay: 0%</label>
+              <input type="range" id="towardsdecaySlider" min="0" max="100" disabled />
+            </div>
+            <div class="slider-row">
+              <label for="towardsripeSlider" id="towardsripeLabel">Towards Ripe: 0%</label>
+              <input type="range" id="towardsripeSlider" min="0" max="100" disabled />
+            </div>
+          </div>
       <p id="aiInsight"><strong>AI Insight:</strong> Awaiting classification...</p>
     </section>
   </main>
