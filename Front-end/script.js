@@ -1,11 +1,11 @@
 const imageUpload = document.getElementById('imageUpload');
 const uploadedImage = document.getElementById('uploadedImage');
-const croppedPreview = document.getElementById('croppedPreview');
+const cleanedPreview = document.getElementById('cleanedPreview');
 const cropBtn = document.getElementById('cropBtn');
 const classifyBtn = document.getElementById('classifyBtn');
 const removeBtn = document.getElementById('removeBtn');
 const result = document.getElementById('result');
-const heatmapPreview = document.getElementById('heatmapPreview'); // ✅ FIXED
+const heatmapPreview = document.getElementById('heatmapPreview');
 const heatmapImg = document.getElementById('heatmapImg');
 const toggleHeatmapBtn = document.getElementById('toggleHeatmap');
 const aiInsight = document.getElementById('aiInsight');
@@ -15,12 +15,10 @@ const navLinks = document.getElementById('nav-links');
 let cropper;
 let croppedBlob = null;
 
-// 🍔 Toggle mobile menu
 mobileMenu?.addEventListener('click', () => {
   navLinks?.classList.toggle('show');
 });
 
-// 📸 Handle image upload and initialize Cropper.js
 imageUpload.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
@@ -39,9 +37,11 @@ imageUpload.addEventListener('change', (e) => {
   reader.readAsDataURL(file);
 });
 
-// ✂️ Crop the image and show the cropped preview
 cropBtn.addEventListener('click', () => {
   if (!cropper) return;
+
+  cropBtn.disabled = true;
+  classifyBtn.disabled = true;
 
   const canvas = cropper.getCroppedCanvas({
     width: 300,
@@ -50,32 +50,51 @@ cropBtn.addEventListener('click', () => {
 
   canvas.toBlob(blob => {
     croppedBlob = blob;
-
-    const dataUrl = canvas.toDataURL();
-    croppedPreview.src = dataUrl;
-    croppedPreview.classList.remove('hidden');
+    classifyImage();
   }, 'image/jpeg');
 });
 
-// 🧠 Classify the cropped image
-classifyBtn.addEventListener('click', async () => {
+async function classifyImage() {
   if (!croppedBlob) {
     alert('Please crop the image first.');
     return;
   }
 
-  result.textContent = '🔍 Classifying...';
+  result.textContent = '🔍 Removing background and classifying...';
+  classifyBtn.disabled = true;
+  cropBtn.disabled = true;
 
   try {
-    const formData = new FormData();
-    formData.append('image', croppedBlob, 'cropped.jpg');
+    const uploadForm = new FormData();
+    uploadForm.append('file', croppedBlob, 'cropped.jpg');
 
-    const res = await fetch('http://localhost:5000/predict', {
+    const removeRes = await fetch('http://localhost:5000/upload', {
       method: 'POST',
-      body: formData
+      body: uploadForm
     });
 
-    const data = await res.json();
+    const removeData = await removeRes.json();
+
+    if (!removeData.removed_bg_url) {
+      throw new Error('No background removed image returned');
+    }
+
+    const imageUrl = `http://localhost:5000/${removeData.removed_bg_url}`;
+    cleanedPreview.src = `${imageUrl}?t=${Date.now()}`;
+    cleanedPreview.classList.remove('hidden');
+
+    const removedImgResponse = await fetch(imageUrl);
+    const removedBlob = await removedImgResponse.blob();
+
+    const predictForm = new FormData();
+    predictForm.append('image', removedBlob, 'cleaned.jpg');
+
+    const predictRes = await fetch('http://localhost:5000/predict', {
+      method: 'POST',
+      body: predictForm
+    });
+
+    const data = await predictRes.json();
 
     if (data.prediction) {
       result.innerHTML = `✅ Prediction: <strong>${data.prediction}</strong>`;
@@ -87,36 +106,40 @@ classifyBtn.addEventListener('click', async () => {
 
     if (data.heatmap_url) {
       heatmapImg.src = `http://localhost:5000/${data.heatmap_url}?t=${Date.now()}`;
-      heatmapPreview.classList.remove('hidden'); // ✅ FIXED
+      heatmapPreview.classList.remove('hidden');
     } else {
       console.error('No heatmap returned.');
     }
+
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
   } catch (err) {
     console.error(err);
     result.textContent = '❌ Failed to classify image.';
   }
-});
 
-// 🔥 Toggle heatmap visibility
+  classifyBtn.disabled = false;
+  cropBtn.disabled = false;
+}
+
+classifyBtn.addEventListener('click', classifyImage);
+
 toggleHeatmapBtn?.addEventListener('click', () => {
-  heatmapPreview?.classList.toggle('hidden'); // ✅ FIXED
+  heatmapPreview?.classList.toggle('hidden');
 });
 
-// ❌ Remove/reset inputs
 removeBtn?.addEventListener('click', resetAll);
 
-// 🔁 Reset all UI elements
 function resetAll() {
   croppedBlob = null;
   imageUpload.value = '';
   uploadedImage.src = '';
   uploadedImage.classList.add('hidden');
-  croppedPreview.src = '';
-  croppedPreview.classList.add('hidden');
+  cleanedPreview.src = '';
+  cleanedPreview.classList.add('hidden');
   result.innerHTML = 'Prediction will appear here.';
   heatmapImg.src = 'placeholder-heatmap.png';
-  heatmapPreview.classList.add('hidden'); 
+  heatmapPreview.classList.add('hidden');
   aiInsight.innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
 
   const sliderIDs = ['rottenSlider', 'ripeSlider', 'rawSlider', 'towardsdecaySlider', 'towardsripeSlider'];
@@ -133,9 +156,11 @@ function resetAll() {
     cropper.destroy();
     cropper = null;
   }
+
+  cropBtn.disabled = false;
+  classifyBtn.disabled = false;
 }
 
-// 📊 Update sliders and AI insight
 function updateSlidersAndInsights(probabilities) {
   const classMap = {
     Rotten: ['rottenSlider', 'rottenLabel'],
@@ -161,4 +186,3 @@ function updateSlidersAndInsights(probabilities) {
 
   aiInsight.innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
 }
-
