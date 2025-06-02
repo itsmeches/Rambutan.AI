@@ -11,31 +11,44 @@
   <nav class="navbar">
     <div class="nav-container">
       <div class="logo">🍈 RambutanAI</div>
-      <div class="menu-toggle" id="mobile-menu">&#9776;</div>
+      <button class="menu-toggle" id="mobile-menu">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="how-it-works.html">How it Works</a></li>
         <li><a href="about.html">About</a></li>
-        <li><a href="contact.html" class="active">Contact</a></li>
+        <li><a href="contact.html">Contact</a></li>
       </ul>
+      <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
   <!-- Contact Section -->
-  <main class="container">
-    <h1>Contact Us</h1>
-    <p>For inquiries, collaborations, or just to say hi, feel free to reach out through any of the platforms below:</p>
+  <main class="container contact-section">
+  <h1>Contact Us</h1>
+  <p class="intro">
+    For inquiries, collaborations, or just to say hi, feel free to reach out through any of the platforms below:
+  </p>
 
-    <ul class="contact-list">
-      <li>📧 Email: <a href="mailto:chester.ai@example.com">Rambutan.ai@gmail.com</a></li>
-      <li>💻 GitHub (psalmey): <a href="https://github.com/psalmey" target="_blank">github.com/psalmey</a></li>
-      <li>💻 GitHub (Itsmeches): <a href="https://github.com/Itsmeches" target="_blank">github.com/Itsmeches</a></li>
-      <li>💻 GitHub (Niccollodeon): <a href="https://github.com/Niccollodeon" target="_blank">github.com/Niccollodeon</a></li>
-      
-      
-    </ul>
-  </main>
+  <div class="contact-grid">
+    <div class="contact-card">
+      💻 <strong>GitHub (psalmey):</strong> <br />
+      <a href="https://github.com/psalmey" target="_blank">github.com/psalmey</a>
+    </div>
 
+    <div class="contact-card">
+      💻 <strong>GitHub (Itsmeches):</strong> <br />
+      <a href="https://github.com/Itsmeches" target="_blank">github.com/Itsmeches</a>
+    </div>
+
+    <div class="contact-card">
+      💻 <strong>GitHub (Niccollodeon):</strong> <br />
+      <a href="https://github.com/Niccollodeon" target="_blank">github.com/Niccollodeon</a>
+    </div>
+  </div>
+</main>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -11,43 +11,53 @@
   <nav class="navbar">
     <div class="nav-container">
       <div class="logo">🍈 RambutanAI</div>
-      <div class="menu-toggle" id="mobile-menu">&#9776;</div>
+      <button class="menu-toggle" id="mobile-menu">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html">Home</a></li>
         <li><a href="how-it-works.html">How it Works</a></li>
-        <li><a href="about.html" class="active">About</a></li>
+        <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+      <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
   <!-- About Section -->
-  <main class="container">
-    <h1>About This Project</h1>
-    <p>
-      RambutanAI is a deep learning-powered project developed by a group of Computer Science students as part of an academic initiative under the subject of Deep Learning.
-    </p>
-    <p>
-      The goal of this project is to assist farmers, agricultural researchers, and enthusiasts in accurately assessing the health of rambutan fruits through AI-based image classification.
-    </p>
-    <p>
-      By combining machine learning techniques with practical agricultural insights, we aim to contribute to smarter, data-driven farming practices in tropical agriculture.
-    </p>
+ <main class="container about-section">
+  <h1>About This Project</h1>
+  <p class="intro">
+    RambutanAI is a deep learning-powered initiative developed by a group of Computer Science students under the Deep Learning subject.
+  </p>
 
-    <h2>Our Vision</h2>
-    <p>
-      Empower local farmers with accessible AI tools that enhance productivity, reduce waste, and promote sustainable farming.
-    </p>
+  <div class="about-grid">
+    <div class="about-card">
+      <h2>🎯 Our Goal</h2>
+      <p>
+        Help farmers and researchers assess rambutan fruit health through image classification powered by AI.
+      </p>
+    </div>
 
-    <h2>Technologies Used</h2>
-    <ul>
-      <li>🔍 Convolutional Neural Networks (CNN)</li>
-      <li>🖥️ TensorFlow / Keras</li>
-      <li>🌐 HTML, CSS, JavaScript</li>
-      <li>📸 Image Processing Techniques</li>
-    </ul>
-  </main>
+    <div class="about-card">
+      <h2>🌱 Our Vision</h2>
+      <p>
+        Empower local farmers with accessible tools that enhance productivity, reduce waste, and promote sustainable farming.
+      </p>
+    </div>
 
+    <div class="about-card">
+      <h2>🛠 Technologies Used</h2>
+      <ul>
+        <li>🔍 Convolutional Neural Networks (CNN)</li>
+        <li>🖥️ TensorFlow / Keras</li>
+        <li>🌐 HTML, CSS, JavaScript</li>
+        <li>📸 Image Processing Techniques</li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

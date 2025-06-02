@@ -19,6 +19,7 @@
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
+       <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
@@ -34,17 +35,14 @@
         <img id="uploadedImage" class="hidden" alt="Uploaded Preview" />
       </div>
       <div class="btn-group">
-        <button id="cropBtn">Crop</button>
-        <button id="classifyBtn">Classify</button>
+        <button id="cropBtn">Analyze</button>
         <button id="removeBtn">Clear</button>
       </div>
     </section>
-
     <section class="panel">
       <h2>2. Cropped + Cleaned Image</h2>
       <img id="cleanedPreview" class="hidden" alt="Cleaned Image Preview" />
     </section>
-
     <section class="panel">
       <h2>3. Heatmap</h2>
       <button id="toggleHeatmap">🔍 Toggle Heatmap</button>
@@ -52,7 +50,6 @@
         <img id="heatmapImg" src="placeholder-heatmap.png" alt="Heatmap Preview" />
       </div>
     </section>
-
     <section class="panel">
       <h2>4. Insights</h2>
       <div id="result">Prediction will appear here.</div>
