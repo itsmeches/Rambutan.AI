@@ -1,8 +1,16 @@
 # 🍈 RambutanAI
 
-A web-based tool for **Leaf-Based Bitter Gourd Health Assessment** using a **Convolutional Neural Network (CNN)** model to detect **NPK Deficiencies** and assess **Soil Compatibility** from uploaded leaf images.
+A web-based tool for **Rambutan Fruit Classification** using a **Convolutional Neural Network (CNN)** model to detect **Whether The Uploaded image is a Rambutan or Not** and assess **Its state** base from uploaded Rambutan images.
 
 This project is built using **Flask (Python)** for backend processing and **HTML/CSS/JS + Cropper.js** for the frontend.
+
+
+
+
+🍈 RambutanAI
+A web-based tool for  using a Convolutional Neural Network (CNN) model to identify whether an uploaded image contains a Rambutan or Not Rambutan fruit.
+
+This project is built using Flask (Python) for backend image processing and prediction, and HTML/CSS/JS + Cropper.js for the interactive frontend.
 
 ---
 
