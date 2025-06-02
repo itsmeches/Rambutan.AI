@@ -5,13 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>How It Works - RambutanAI</title>
   <link rel="stylesheet" href="style.css" />
-  
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="logo">🍈 RambutanAI</div>
+      <div class="logo" ahref="index.html">🍈 RambutanAI</div>
       <button class="menu-toggle" id="mobile-menu">&#9776;</button>
       <ul class="nav-links" id="nav-links">
         <li><a href="index.html">Home</a></li>
@@ -19,41 +18,41 @@
         <li><a href="about.html">About</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
-       <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
     </div>
   </nav>
 
   <!-- Main Content -->
   <main class="container how-section">
-  <h1>How It Works</h1>
+    <h1>How RambutanAI Works</h1>
 
-  <p class="intro">
-    RambutanAI uses an advanced Convolutional Neural Network (CNN) trained on a diverse dataset of rambutan fruits. The model detects signs of ripeness, nutrient deficiencies, and overall fruit condition based on image features.
-  </p>
-
-  <details open>
-    <summary><h2>Step-by-Step Process</h2></summary>
-    <ul>
-      <li>📸 <strong>Step 1:</strong> Upload a clear photo of a rambutan fruit.</li>
-      <li>🤖 <strong>Step 2:</strong> The image is analyzed using deep learning algorithms.</li>
-      <li>📊 <strong>Step 3:</strong> You receive a condition label (e.g., healthy, ripe).</li>
-    </ul>
-  </details>
-
-  <details>
-    <summary><h2>Tips for Best Results</h2></summary>
-    <ul>
-      <li>✅ Use a plain white background or remove background.</li>
-      <li>✅ Ensure the fruit is centered and visible.</li>
-      <li>✅ Avoid blurry or cluttered images.</li>
-      <li>✅ Prefer natural light.</li>
-    </ul>
-    <p>
-      These help the AI model focus on the fruit and reduce misclassification.
+    <p class="intro">
+      <strong>RambutanAI</strong> RambutanAI is an intelligent image-based system that uses a Convolutional Neural Network (CNN) to assess the current state of rambutan fruits—including their ripeness and overall health—based on visual features. Simply upload a photo, and the system provides instant feedback with visual explanations.
     </p>
-  </details>
-</main>
 
+    <details open>
+      <summary><h2>Step-by-Step Process</h2></summary>
+      <ul>
+        <li>📸 <strong>Step 1:</strong> Upload a clear photo of a rambutan fruit via the system interface.</li>
+        <li>🧠 <strong>Step 2:</strong> The AI removes the background and runs image analysis using a trained CNN model.</li>
+        <li>📊 <strong>Step 3:</strong> You receive a predicted label (e.g., Ripe, Raw, Rotten) along with a confidence score.</li>
+        <li>🔥 <strong>Step 4:</strong> A visual heatmap highlights which parts of the image influenced the model's decision.</li>
+      </ul>
+    </details>
+
+    <details>
+      <summary><h2>Tips for Best Results</h2></summary>
+      <ul>
+        <li>✅ Use a plain or white background if possible (or let the app remove it automatically).</li>
+        <li>✅ Center the rambutan fruit and keep it well-lit.</li>
+        <li>✅ Avoid motion blur and background clutter.</li>
+        <li>✅ Capture images under natural lighting conditions when available.</li>
+      </ul>
+      <p>
+        Following these tips helps the AI model better focus on the fruit, increasing prediction accuracy and reliability.
+      </p>
+    </details>
+  </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="script.js"></script>

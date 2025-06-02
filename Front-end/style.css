@@ -939,3 +939,12 @@ body, .panel, .navbar, .btn-group, .image-preview, .heatmap-preview {
   from { width: 0; }
   to { width: 60%; }
 }
+
+html {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+body::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}

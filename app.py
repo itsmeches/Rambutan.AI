@@ -496,6 +496,156 @@
 # if __name__ == '__main__':
 #     app.run(debug=True)
 
+# from flask import Flask, request, jsonify, send_from_directory
+# from flask_cors import CORS
+# import tensorflow as tf
+# import numpy as np
+# from PIL import Image
+# import io
+# import os
+# import cv2
+# import requests
+# import uuid
+
+# app = Flask(__name__)
+# CORS(app)
+
+# # Create static directory if not exists
+# os.makedirs("static", exist_ok=True)
+
+# # Model setup
+# model_path = '1.h5'
+# model = None
+# try:
+#     model = tf.keras.models.load_model(model_path)
+#     print("✅ Model loaded.")
+# except Exception as e:
+#     print("❌ Model loading failed:", e)
+
+# class_names = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe']
+
+# # 🧼 Background removal function using rembg API
+# def remove_background(image_bytes):
+#     url = "https://api.rembg.com/rmbg"
+#     headers = {
+#         "x-api-key": "895c0a70-1214-4511-88d0-bd35cba6bfd9"
+#     }
+#     files = {"image": ("uploaded_image.jpg", image_bytes, "image/jpeg")}
+#     response = requests.post(url, headers=headers, files=files)
+
+#     if response.status_code == 200:
+#         return response.content
+#     else:
+#         print("❌ Background removal failed:", response.status_code, response.text)
+#         return None
+
+# # 🔄 Upload route for background removal only
+# @app.route('/upload', methods=['POST'])
+# def upload_and_remove_bg():
+#     if 'file' not in request.files:
+#         return jsonify({"error": "No file uploaded"}), 400
+
+#     file = request.files['file']
+#     if file.filename == '':
+#         return jsonify({"error": "No selected file"}), 400
+
+#     image_bytes = file.read()
+#     cleaned_bytes = remove_background(io.BytesIO(image_bytes))
+#     if cleaned_bytes is None:
+#         return jsonify({'error': 'Background removal failed'}), 500
+
+#     output_filename = f"removed_{uuid.uuid4().hex}.png"
+#     output_path = os.path.join("static", output_filename)
+#     with open(output_path, "wb") as f:
+#         f.write(cleaned_bytes)
+
+#     return jsonify({
+#         "removed_bg_url": f"static/{output_filename}"
+#     })
+
+# # 🔍 Prediction route
+# @app.route('/predict', methods=['POST'])
+# def predict():
+#     if model is None:
+#         return jsonify({'error': 'Model not loaded.'}), 500
+
+#     if 'image' not in request.files:
+#         return jsonify({'error': 'No image file uploaded'}), 400
+
+#     file = request.files['image']
+#     image_bytes = file.read()
+
+#     # Step 1: Remove background
+#     cleaned_bytes = remove_background(io.BytesIO(image_bytes))
+#     if cleaned_bytes is None:
+#         return jsonify({'error': 'Background removal failed'}), 500
+
+#     # Save background-removed image
+#     remove_bg_filename = f"removed_{uuid.uuid4().hex}.png"
+#     remove_bg_path = os.path.join("static", remove_bg_filename)
+#     with open(remove_bg_path, "wb") as f:
+#         f.write(cleaned_bytes)
+
+#     # Step 2: Prepare image for prediction
+#     image = Image.open(io.BytesIO(cleaned_bytes)).convert('RGB')
+#     image = image.resize((224, 224))
+#     np_img = np.array(image)
+#     input_img = np.expand_dims(np_img / 255.0, axis=0)
+
+#     # Step 3: Predict
+#     predictions = model.predict(input_img)
+#     prediction_idx = np.argmax(predictions[0])
+#     prediction_label = class_names[prediction_idx]
+#     probabilities = predictions[0].tolist()
+
+#     # Step 4: Grad-CAM and heatmap
+#     heatmap = grad_cam(model, input_img)
+#     overlay = overlay_heatmap(np_img, heatmap)
+
+#     heatmap_filename = f"{uuid.uuid4().hex}.jpg"
+#     heatmap_path = os.path.join("static", heatmap_filename)
+#     cv2.imwrite(heatmap_path, overlay)
+
+#     return jsonify({
+#         'prediction': prediction_label,
+#         'probabilities': probabilities,
+#         'heatmap_url': f"static/{heatmap_filename}",
+#         "removed_bg_url": f"static/{remove_bg_filename}"
+#     })
+
+# # 🖼️ Serve static files
+# @app.route('/static/<filename>')
+# def serve_static(filename):
+#     return send_from_directory('static', filename)
+
+# # 🔥 Grad-CAM utilities
+# def grad_cam(model, image, layer_name="block_16_project_BN"):
+#     grad_model = tf.keras.models.Model([model.inputs], [model.get_layer(layer_name).output, model.output])
+#     with tf.GradientTape() as tape:
+#         conv_outputs, predictions = grad_model(image)
+#         class_idx = tf.argmax(predictions[0])
+#         output = predictions[:, class_idx]
+#         grads = tape.gradient(output, conv_outputs)
+#         pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+#         conv_outputs = conv_outputs[0]
+#         heatmap = tf.reduce_sum(tf.multiply(pooled_grads, conv_outputs), axis=-1)
+#         heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
+#         return heatmap.numpy()
+
+# def overlay_heatmap(orig_img, heatmap, alpha=0.4):
+#     heatmap = cv2.resize(heatmap, (orig_img.shape[1], orig_img.shape[0]))
+#     heatmap = np.uint8(255 * heatmap)
+#     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
+#     blended = cv2.addWeighted(orig_img, 1 - alpha, heatmap, alpha, 0)
+#     return blended
+
+# # Debug: print all registered routes
+# print("🔗 Registered routes:")
+# print(app.url_map)
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+    
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import tensorflow as tf
@@ -506,6 +656,9 @@ import os
 import cv2
 import requests
 import uuid
+import hashlib
+import random
+import datetime
 
 app = Flask(__name__)
 CORS(app)
@@ -513,22 +666,68 @@ CORS(app)
 # Create static directory if not exists
 os.makedirs("static", exist_ok=True)
 
-# Model setup
-model_path = '1.h5'
-model = None
-try:
-    model = tf.keras.models.load_model(model_path)
-    print("✅ Model loaded.")
-except Exception as e:
-    print("❌ Model loading failed:", e)
+# === Model loading utility ===
+def load_model_safe(path, name="Model"):
+    try:
+        model = tf.keras.models.load_model(path)
+        print(f"✅ {name} loaded from '{path}'")
+        return model
+    except Exception as e:
+        print(f"❌ {name} loading failed:", e)
+        return None
+
+# === Load models ===
+model = load_model_safe('1.h5', "Ripeness model")
+rambutan_model = load_model_safe('2.h5', "Rambutan checker model")
 
 class_names = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe']
 
-# 🧼 Background removal function using rembg API
+# === Rambutan Checker ===
+@app.route('/check-rambutan', methods=['POST'])
+def check_rambutan():
+    if rambutan_model is None:
+        return jsonify({'error': 'Rambutan model not loaded.'}), 500
+
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image file uploaded'}), 400
+
+    try:
+        file = request.files['image']
+        print(f"\n📸 New Image Uploaded: {file.filename} at {datetime.datetime.now()}")
+
+        image = Image.open(file.stream).convert('RGB')
+        image = image.resize((224, 224))
+        np_img = np.array(image).astype('float32') / 255.0
+        input_img = np.expand_dims(np_img, axis=0)
+
+        print("✅ Image shape:", input_img.shape)
+        print("🎯 First pixel (R, G, B):", input_img[0, 0, 0])
+        img_hash = hashlib.md5(input_img.tobytes()).hexdigest()
+        print("🧠 Image hash:", img_hash)
+        print("🔁 Sanity check number:", random.random())
+
+        predictions = rambutan_model.predict(input_img)[0].tolist()
+        print("🔍 Raw predictions:", predictions)
+
+        predicted_index = int(np.argmax(predictions))
+        label = "Rambutan" if predicted_index == 0 else "Not Rambutan"
+        confidence = round(predictions[predicted_index] * 100, 2)
+
+        return jsonify({
+            "label": label,
+            "confidence": confidence,
+            "raw_predictions": predictions
+        })
+
+    except Exception as e:
+        print("❌ Prediction error:", str(e))
+        return jsonify({'error': 'Prediction failed', 'details': str(e)}), 500
+
+# === Background Removal ===
 def remove_background(image_bytes):
     url = "https://api.rembg.com/rmbg"
     headers = {
-        "x-api-key": "895c0a70-1214-4511-88d0-bd35cba6bfd9"
+        "x-api-key": os.getenv("REMBG_API_KEY", "895c0a70-1214-4511-88d0-bd35cba6bfd9")  # Replace before deployment
     }
     files = {"image": ("uploaded_image.jpg", image_bytes, "image/jpeg")}
     response = requests.post(url, headers=headers, files=files)
@@ -539,7 +738,6 @@ def remove_background(image_bytes):
         print("❌ Background removal failed:", response.status_code, response.text)
         return None
 
-# 🔄 Upload route for background removal only
 @app.route('/upload', methods=['POST'])
 def upload_and_remove_bg():
     if 'file' not in request.files:
@@ -563,11 +761,11 @@ def upload_and_remove_bg():
         "removed_bg_url": f"static/{output_filename}"
     })
 
-# 🔍 Prediction route
+# === Ripeness Prediction ===
 @app.route('/predict', methods=['POST'])
 def predict():
     if model is None:
-        return jsonify({'error': 'Model not loaded.'}), 500
+        return jsonify({'error': 'Ripeness model not loaded.'}), 500
 
     if 'image' not in request.files:
         return jsonify({'error': 'No image file uploaded'}), 400
@@ -575,30 +773,25 @@ def predict():
     file = request.files['image']
     image_bytes = file.read()
 
-    # Step 1: Remove background
     cleaned_bytes = remove_background(io.BytesIO(image_bytes))
     if cleaned_bytes is None:
         return jsonify({'error': 'Background removal failed'}), 500
 
-    # Save background-removed image
     remove_bg_filename = f"removed_{uuid.uuid4().hex}.png"
     remove_bg_path = os.path.join("static", remove_bg_filename)
     with open(remove_bg_path, "wb") as f:
         f.write(cleaned_bytes)
 
-    # Step 2: Prepare image for prediction
     image = Image.open(io.BytesIO(cleaned_bytes)).convert('RGB')
     image = image.resize((224, 224))
     np_img = np.array(image)
     input_img = np.expand_dims(np_img / 255.0, axis=0)
 
-    # Step 3: Predict
     predictions = model.predict(input_img)
     prediction_idx = np.argmax(predictions[0])
     prediction_label = class_names[prediction_idx]
     probabilities = predictions[0].tolist()
 
-    # Step 4: Grad-CAM and heatmap
     heatmap = grad_cam(model, input_img)
     overlay = overlay_heatmap(np_img, heatmap)
 
@@ -613,12 +806,10 @@ def predict():
         "removed_bg_url": f"static/{remove_bg_filename}"
     })
 
-# 🖼️ Serve static files
 @app.route('/static/<filename>')
 def serve_static(filename):
     return send_from_directory('static', filename)
 
-# 🔥 Grad-CAM utilities
 def grad_cam(model, image, layer_name="block_16_project_BN"):
     grad_model = tf.keras.models.Model([model.inputs], [model.get_layer(layer_name).output, model.output])
     with tf.GradientTape() as tape:
@@ -639,10 +830,9 @@ def overlay_heatmap(orig_img, heatmap, alpha=0.4):
     blended = cv2.addWeighted(orig_img, 1 - alpha, heatmap, alpha, 0)
     return blended
 
-# Debug: print all registered routes
+# === Server start ===
 print("🔗 Registered routes:")
 print(app.url_map)
 
 if __name__ == '__main__':
     app.run(debug=True)
-    

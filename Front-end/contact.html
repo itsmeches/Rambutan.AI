@@ -5,6 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Contact - RambutanAI</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      margin: 0;
+      overflow-y: hidden; /* Remove vertical scroll */
+    }
+
+    .contact-section {
+      text-align: center;
+      overflow-y: hidden; /* Prevent vertical scroll in the section */
+    }
+
+    .contact-grid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 2rem 1rem;
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .contact-grid::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
+    }
+
+    .contact-card {
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border-radius: 12px;
+      width: 200px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .contact-card img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+    }
+
+    .contact-card h2 {
+      font-size: 1rem;
+      margin: 10px 0 5px;
+    }
+
+    .contact-card a {
+      font-size: 0.9rem;
+      color: #007bff;
+      text-decoration: none;
+      word-break: break-word;
+    }
+
+    .contact-card a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
@@ -24,29 +84,32 @@
 
   <!-- Contact Section -->
   <main class="container contact-section">
-  <h1>Contact Us</h1>
-  <p class="intro">
-    For inquiries, collaborations, or just to say hi, feel free to reach out through any of the platforms below:
-  </p>
+    <h1>Contact Us</h1>
+    <p class="intro">
+      For inquiries, collaborations, or just to say hi, feel free to reach out through any of the platforms below:
+    </p>
 
-  <div class="contact-grid">
-    <div class="contact-card">
-      💻 <strong>GitHub (psalmey):</strong> <br />
-      <a href="https://github.com/psalmey" target="_blank">github.com/psalmey</a>
-    </div>
+    <div class="contact-grid" id="contactGrid"></div>
+  </main>
 
-    <div class="contact-card">
-      💻 <strong>GitHub (Itsmeches):</strong> <br />
-      <a href="https://github.com/Itsmeches" target="_blank">github.com/Itsmeches</a>
-    </div>
+  <script>
+    const contributors = ["psalmey", "Itsmeches", "Niccollodeon"];
+    const contactGrid = document.getElementById("contactGrid");
 
-    <div class="contact-card">
-      💻 <strong>GitHub (Niccollodeon):</strong> <br />
-      <a href="https://github.com/Niccollodeon" target="_blank">github.com/Niccollodeon</a>
-    </div>
-  </div>
-</main>
+    contributors.forEach(async username => {
+      const res = await fetch(`https://api.github.com/users/${username}`);
+      const data = await res.json();
 
+      const card = document.createElement("div");
+      card.className = "contact-card";
+      card.innerHTML = `
+        <img src="${data.avatar_url}" alt="${username}'s avatar">
+        <h2>💻 ${data.name || username}</h2>
+        <p><a href="${data.html_url}" target="_blank">${data.html_url}</a></p>
+      `;
+      contactGrid.appendChild(card);
+    });
+  </script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="script.js"></script>
