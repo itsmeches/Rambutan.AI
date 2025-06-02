@@ -11,14 +11,18 @@ This project is built using **Flask (Python)** for backend processing and **HTML
 ```
 rambutanai/
 ├── app.py
-├── templates/
+├── Front-End/
 │   └── index.html
-├── static/
+│   └── how-to-use.html
+│   └── about.html
+│   └── contact.html
 │   ├── style.css
-│   └── cropper.min.js
+│   ├── script.js
+├── static/
+    ├──upload folder
 ├── model/
-│   └── cnn_model.h5
-├── uploads/
+│   └── 1.h5
+│   ├── 2.h5
 ├── requirements.txt
 └── README.md
 ```
