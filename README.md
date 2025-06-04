@@ -60,6 +60,7 @@ Your `requirements.txt` should include:
 ```
 flask
 flask-cors
+flask flask-login flask-sqlalchemy
 tensorflow
 numpy
 Pillow

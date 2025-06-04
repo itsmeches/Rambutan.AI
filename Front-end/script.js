@@ -33,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // Only run the following if on index.html (where these elements exist)
   const imageUpload = document.getElementById('imageUpload');
   const uploadedImage = document.getElementById('uploadedImage');
+  const imagePlaceholder = document.getElementById('imagePlaceholder');
   const cleanedPreview = document.getElementById('cleanedPreview');
+  const cleanedPlaceholder = document.getElementById('cleanedPlaceholder'); // <-- Add this line
   const cropBtn = document.getElementById('cropBtn');
   const removeBtn = document.getElementById('removeBtn');
   const result = document.getElementById('result');
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.onload = () => {
         uploadedImage.src = reader.result;
         uploadedImage.classList.remove('hidden');
+        if (imagePlaceholder) imagePlaceholder.classList.add('hidden');
 
         if (cropper) cropper.destroy();
         cropper = new Cropper(uploadedImage, {
@@ -107,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const imageUrl = `http://localhost:5000/${removeData.removed_bg_url}`;
         cleanedPreview.src = `${imageUrl}?t=${Date.now()}`;
         cleanedPreview.classList.remove('hidden');
+        if (cleanedPlaceholder) cleanedPlaceholder.classList.add('hidden'); // <-- Hide placeholder
 
         const removedImgResponse = await fetch(imageUrl);
         const removedBlob = await removedImgResponse.blob();
@@ -157,8 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
       imageUpload.value = '';
       uploadedImage.src = '';
       uploadedImage.classList.add('hidden');
+      if (imagePlaceholder) imagePlaceholder.classList.remove('hidden');
       cleanedPreview.src = '';
       cleanedPreview.classList.add('hidden');
+      if (cleanedPlaceholder) cleanedPlaceholder.classList.remove('hidden'); // <-- Show placeholder
       result.innerHTML = 'Prediction will appear here.';
       heatmapImg.src = 'placeholder-heatmap.png';
       heatmapPreview.classList.add('hidden');
