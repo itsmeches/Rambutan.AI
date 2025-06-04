@@ -1,8 +1,16 @@
 # 🍈 RambutanAI
 
-A web-based tool for **Leaf-Based Bitter Gourd Health Assessment** using a **Convolutional Neural Network (CNN)** model to detect **NPK Deficiencies** and assess **Soil Compatibility** from uploaded leaf images.
+A web-based tool for **Rambutan Fruit Classification** using a **Convolutional Neural Network (CNN)** model to detect **Whether The Uploaded image is a Rambutan or Not** and assess **Its state** base from uploaded Rambutan images.
 
 This project is built using **Flask (Python)** for backend processing and **HTML/CSS/JS + Cropper.js** for the frontend.
+
+
+
+
+🍈 RambutanAI
+A web-based tool for  using a Convolutional Neural Network (CNN) model to identify whether an uploaded image contains a Rambutan or Not Rambutan fruit.
+
+This project is built using Flask (Python) for backend image processing and prediction, and HTML/CSS/JS + Cropper.js for the interactive frontend.
 
 ---
 
@@ -11,14 +19,18 @@ This project is built using **Flask (Python)** for backend processing and **HTML
 ```
 rambutanai/
 ├── app.py
-├── templates/
+├── Front-End/
 │   └── index.html
-├── static/
+│   └── how-to-use.html
+│   └── about.html
+│   └── contact.html
 │   ├── style.css
-│   └── cropper.min.js
+│   ├── script.js
+├── static/
+    ├──upload folder
 ├── model/
-│   └── cnn_model.h5
-├── uploads/
+│   └── 1.h5
+│   ├── 2.h5
 ├── requirements.txt
 └── README.md
 ```
@@ -61,6 +73,8 @@ Your `requirements.txt` should include:
 flask
 flask-cors
 flask flask-login flask-sqlalchemy
+flask-login
+flask-sqlalchemy
 tensorflow
 numpy
 Pillow
@@ -110,8 +124,8 @@ You should see output like:
 ### 🌱 Step 4: Use the Web App
 
 1. Open your browser and go to: [http://127.0.0.1:5000](http://127.0.0.1:5000)
-2. Upload or crop a bitter gourd leaf.
-3. View the model prediction (NPK deficiency/soil compatibility).
+2. Upload or crop a Rambutan fruit.
+3. View the model prediction (Rambutan).
 
 ---
 
@@ -142,7 +156,7 @@ A: Manually open a browser and go to: http://127.0.0.1:5000/
 
 ## 👤 Author
 
-Developed by **Chester Andaya**  
+Developed by **Chester Andaya, Niccollo Dayritt, Psalm Ashley Andal**  
 📧 Email: chester.andaya11@gmail.com
 
 ---
