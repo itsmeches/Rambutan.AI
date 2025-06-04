@@ -75,6 +75,7 @@ flask-cors
 flask flask-login flask-sqlalchemy
 flask-login
 flask-sqlalchemy
+flask flask-login flask-sqlalchemy
 tensorflow
 numpy
 Pillow
