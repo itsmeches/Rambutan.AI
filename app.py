@@ -847,6 +847,7 @@
 
 from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
+from keras.layers import TFSMLayer
 import tensorflow as tf
 import numpy as np
 from PIL import Image
@@ -857,6 +858,7 @@ import requests
 import uuid
 import hashlib
 import datetime
+
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -932,37 +934,37 @@ rambutan_model = load_model_safe('2 1.h5', "Rambutan checker model")
 
 class_names = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe']
 
-@app.route('/check-rambutan', methods=['POST'])
-def check_rambutan():
-    if rambutan_model is None:
-        return jsonify({'error': 'Rambutan model not loaded.'}), 500
+# @app.route('/check-rambutan', methods=['POST'])
+# def check_rambutan():
+#     if rambutan_model is None:
+#         return jsonify({'error': 'Rambutan model not loaded.'}), 500
 
-    if 'image' not in request.files:
-        return jsonify({'error': 'No image file uploaded'}), 400
+#     if 'image' not in request.files:
+#         return jsonify({'error': 'No image file uploaded'}), 400
 
-    try:
-        file = request.files['image']
-        image = Image.open(file.stream).convert('RGB').resize((224, 224))
-        np_img = np.array(image).astype('float32') / 255.0
-        input_img = np.expand_dims(np_img, axis=0)
+#     try:
+#         file = request.files['image']
+#         image = Image.open(file.stream).convert('RGB').resize((224, 224))
+#         np_img = np.array(image).astype('float32') / 255.0
+#         input_img = np.expand_dims(np_img, axis=0)
 
-        prediction = rambutan_model.predict(input_img)
-        softmax_output = tf.nn.softmax(prediction[0]).numpy()
+#         prediction = rambutan_model.predict(input_img)
+#         softmax_output = tf.nn.softmax(prediction[0]).numpy()
 
-        predicted_class_index = int(np.argmax(softmax_output))
-        confidence = round(float(np.max(softmax_output)) * 100, 2)
+#         predicted_class_index = int(np.argmax(softmax_output))
+#         confidence = round(float(np.max(softmax_output)) * 100, 2)
 
-        class_labels = ['Rambutan', 'Not_Rambutan']
-        label = class_labels[predicted_class_index]
+#         class_labels = ['Not_Rambutan', 'Rambutan']
+#         label = class_labels[predicted_class_index]
 
-        return jsonify({
-            "label": label,
-            "confidence": confidence,
-            "raw_prediction": float(softmax_output[predicted_class_index])
-        })
+#         return jsonify({
+#             "label": label,
+#             "confidence": confidence,
+#             "raw_prediction": float(softmax_output[predicted_class_index])
+#         })
 
-    except Exception as e:
-        return jsonify({'error': 'Prediction failed', 'details': str(e)}), 500
+#     except Exception as e:
+#         return jsonify({'error': 'Prediction failed', 'details': str(e)}), 500
 
 def remove_background(image_bytes):
     url = "https://api.rembg.com/rmbg"
@@ -1061,7 +1063,49 @@ def overlay_heatmap(orig_img, heatmap, alpha=0.4):
     heatmap = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
     return cv2.addWeighted(orig_img, 1 - alpha, heatmap, alpha, 0)
 
+@app.route('/classify-rambutan-pb', methods=['POST'])
+def classify_rambutan_pb():
+    if 'image' not in request.files:
+        return jsonify({'error': 'No image uploaded'}), 400
+
+    try:
+        # Load and preprocess the image
+        file = request.files['image']
+        image = Image.open(file.stream).convert('RGB').resize((224, 224))
+        np_img = np.array(image).astype('float32')
+        input_tensor = np.expand_dims(np_img, axis=0)
+        input_tensor = (input_tensor / 127.5) - 1  # normalize to [-1, 1]
+
+        # Load the SavedModel using TFSMLayer
+        model_path = "model.savedmodel"  # directory with saved_model.pb
+        inference_layer = TFSMLayer(model_path, call_endpoint="serving_default")
+
+        # Run prediction using the layer
+        output_dict = inference_layer(input_tensor)
+
+        # Get first value from dict and convert to numpy array
+        prediction_tensor = list(output_dict.values())[0]
+        prediction = prediction_tensor.numpy()
+
+        # Get class index and confidence
+        predicted_index = int(np.argmax(prediction))
+        confidence = round(float(np.max(prediction)) * 100, 2)
+
+        # Load class labels (e.g., 0 = not rambutan, 1 = rambutan)
+        with open("labels.txt", "r") as f:
+            class_names = [line.strip() for line in f.readlines()]
+
+        label = class_names[predicted_index]
+
+        return jsonify({
+            'class_index': predicted_index,
+            'label': label,
+            'confidence': confidence
+        })
+
+    except Exception as e:
+        return jsonify({'error': 'Prediction failed', 'details': str(e)}), 500
+
 # ========== START SERVER ==========
 if __name__ == '__main__':
     app.run(debug=True)
-

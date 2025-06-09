@@ -3,22 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About - RambutanAI</title>
+  <title>Rambutan Classifier</title>
   <link rel="stylesheet" href="style.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
+  <style>
+    .logout-btn {
+      background: #e53935;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-left: 1rem;
+      box-shadow: 0 2px 8px rgba(229,57,53,0.08);
+    }
+    .logout-btn:hover,
+    .logout-btn:focus {
+      background: #b71c1c;
+      outline: 2px solid #b71c1c;
+      outline-offset: 2px;
+    }
+  </style>
 </head>
 <body>
   <!-- Navbar -->
   <nav class="navbar">
     <div class="nav-container">
-      <div class="logo">🍈 RambutanAI</div>
-      <button class="menu-toggle" id="mobile-menu">&#9776;</button>
+      <div class="logo" tabindex="0">🍈 RambutanAI</div>
+      <button class="menu-toggle" id="mobile-menu" aria-label="Open navigation">&#9776;</button>
       <ul class="nav-links" id="nav-links">
-        <li><a href="index.html">Home</a></li>
-        <li><a href="how-it-works.html">How it Works</a></li>
-        <li><a href="about.html">About</a></li>
-        <li><a href="contact.html">Contact</a></li>
+        <li><a href="index.html"><span class="nav-icon"></span>Home</a></li>
+        <li><a href="how-it-works.html"><span class="nav-icon"></span>How it Works</a></li>
+        <li><a href="about.html"><span class="nav-icon"></span>About</a></li>
+        <li><a href="contact.html"><span class="nav-icon"></span>Contact</a></li>
       </ul>
-      <button class="dark-toggle" id="darkToggle" title="Toggle dark mode">🌙</button>
+      <button class="dark-toggle" id="darkToggle" title="Toggle dark mode" aria-label="Toggle dark mode">🌙</button>
+      <button class="logout-btn" id="logoutBtn" title="Logout">Logout</button>
     </div>
   </nav>
 

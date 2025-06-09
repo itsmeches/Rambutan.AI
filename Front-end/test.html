@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teachable Machine Rambutan Classifier</title>
+</head>
+<body>
+    <h2>Teachable Machine Rambutan Classifier</h2>
+    
+    <!-- Webcam controls -->
+    <button type="button" onclick="init()">Start Webcam</button>
+    <div id="webcam-container"></div>
+    
+    <!-- File upload controls -->
+    <input type="file" id="imageUpload" accept="image/*" onchange="predictUploadedImage(event)" />
+    <div id="image-preview-container">
+        <img id="uploaded-image" src="#" alt="Image preview" style="display:none; width: 200px;"/>
+    </div>
+
+    <!-- Prediction output -->
+    <div id="label-container"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest"></script>
+
+    <script>
+        const URL = "./tm-my-image-model/";
+
+        let model, webcam, labelContainer, maxPredictions;
+
+        async function init() {
+            try {
+                const modelURL = URL + "model.json";
+                const metadataURL = URL + "metadata.json";
+
+                model = await tmImage.load(modelURL, metadataURL);
+                maxPredictions = model.getTotalClasses();
+
+                const flip = true;
+                webcam = new tmImage.Webcam(200, 200, flip);
+                await webcam.setup();
+                await webcam.play();
+                window.requestAnimationFrame(loop);
+
+                document.getElementById("webcam-container").appendChild(webcam.canvas);
+                labelContainer = document.getElementById("label-container");
+                labelContainer.innerHTML = "";
+                for (let i = 0; i < maxPredictions; i++) {
+                    labelContainer.appendChild(document.createElement("div"));
+                }
+            } catch (err) {
+                console.error("Error initializing webcam:", err);
+                alert("Failed to access webcam or load model.");
+            }
+        }
+
+        async function loop() {
+            webcam.update();
+            await predict(webcam.canvas);
+            window.requestAnimationFrame(loop);
+        }
+
+        async function predict(source) {
+            const prediction = await model.predict(source);
+            for (let i = 0; i < maxPredictions; i++) {
+                const classPrediction = `${prediction[i].className}: ${prediction[i].probability.toFixed(2)}`;
+                labelContainer.childNodes[i].innerHTML = classPrediction;
+            }
+        }
+
+        async function predictUploadedImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const img = document.getElementById("uploaded-image");
+            img.src = URL.createObjectURL(file);
+            img.onload = async () => {
+                img.style.display = "block";
+
+                if (!model) {
+                    const modelURL = URL + "model.json";
+                    const metadataURL = URL + "metadata.json";
+                    model = await tmImage.load(modelURL, metadataURL);
+                    maxPredictions = model.getTotalClasses();
+                    labelContainer = document.getElementById("label-container");
+                    labelContainer.innerHTML = "";
+                    for (let i = 0; i < maxPredictions; i++) {
+                        labelContainer.appendChild(document.createElement("div"));
+                    }
+                }
+
+                await predict(img);
+            };
+        }
+    </script>
+</body>
+</html>

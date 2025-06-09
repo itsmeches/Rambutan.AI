@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Navbar and dark mode
+  // Navbar, dark mode & mobile menu (unchanged)
   const darkToggle = document.getElementById('darkToggle');
   if (darkToggle) {
     darkToggle.addEventListener('click', () => {
@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         darkToggle.innerText = '🌙';
       }
     });
-    // On load, restore preference
     if (localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark-mode');
       darkToggle.innerText = '☀️';
@@ -21,21 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Mobile menu
   const mobileMenu = document.getElementById('mobile-menu');
   const navLinks = document.getElementById('nav-links');
   if (mobileMenu && navLinks) {
-    mobileMenu.addEventListener('click', () => {
-      navLinks.classList.toggle('show');
-    });
+    mobileMenu.addEventListener('click', () => navLinks.classList.toggle('show'));
   }
 
-  // Only run the following if on index.html (where these elements exist)
+  // Core elements
   const imageUpload = document.getElementById('imageUpload');
   const uploadedImage = document.getElementById('uploadedImage');
   const imagePlaceholder = document.getElementById('imagePlaceholder');
+  const rambutanCheck = document.getElementById('rambutanCheck');
   const cleanedPreview = document.getElementById('cleanedPreview');
-  const cleanedPlaceholder = document.getElementById('cleanedPlaceholder'); // <-- Add this line
+  const cleanedPlaceholder = document.getElementById('cleanedPlaceholder');
   const cropBtn = document.getElementById('cropBtn');
   const removeBtn = document.getElementById('removeBtn');
   const result = document.getElementById('result');
@@ -47,36 +44,64 @@ document.addEventListener('DOMContentLoaded', () => {
   let cropper;
   let croppedBlob = null;
 
-  if (imageUpload && uploadedImage && cropBtn && cleanedPreview && removeBtn && result && heatmapPreview && heatmapImg && toggleHeatmapBtn && aiInsight) {
-    imageUpload.addEventListener('change', (e) => {
+  if (imageUpload && uploadedImage && cropBtn && cleanedPreview && removeBtn && result && heatmapPreview && heatmapImg && toggleHeatmapBtn && aiInsight && rambutanCheck) {
+
+    imageUpload.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        uploadedImage.src = reader.result;
-        uploadedImage.classList.remove('hidden');
-        if (imagePlaceholder) imagePlaceholder.classList.add('hidden');
+      // 1️⃣ Check Rambutan
+      const verifyForm = new FormData();
+      verifyForm.append('image', file);
 
-        if (cropper) cropper.destroy();
-        cropper = new Cropper(uploadedImage, {
-          aspectRatio: 1,
-          viewMode: 1
+      try {
+        const res = await fetch('http://127.0.0.1:5000/classify-rambutan-pb', {
+          method: 'POST',
+          body: verifyForm
         });
-      };
-      reader.readAsDataURL(file);
+        const data = await res.json();
+
+        const isRambutan = data.label && !data.label.includes('Not_Rambutan');
+        rambutanCheck.textContent = isRambutan
+          ? '✅ Rambutan detected'
+          : '❌ Not a rambutan';
+        rambutanCheck.style.color = isRambutan ? 'green' : 'red';
+
+        if (!isRambutan) {
+          const proceed = confirm(
+          "⚠️ This image doesn't appear to be a Rambutan.\n\nIf you believe it is, please ensure it's clearly visible and properly framed before cropping.\n\nWould you like to continue anyway?");
+          if (!proceed) {
+            resetAll();
+            return;
+          }
+        }
+
+
+        // 2️⃣ Load into Cropper
+        const reader = new FileReader();
+        reader.onload = () => {
+          uploadedImage.src = reader.result;
+          uploadedImage.classList.remove('hidden');
+          imagePlaceholder.classList.add('hidden');
+
+          if (cropper) cropper.destroy();
+          cropper = new Cropper(uploadedImage, { aspectRatio: 1, viewMode: 1 });
+        };
+        reader.readAsDataURL(file);
+
+      } catch (err) {
+        console.error('Error verifying rambutan:', err);
+        alert('🚫 Could not check image. Please try again.');
+        resetAll();
+      }
     });
 
+    // Analyze button
     cropBtn.addEventListener('click', () => {
       if (!cropper) return;
 
       cropBtn.disabled = true;
-
-      const canvas = cropper.getCroppedCanvas({
-        width: 300,
-        height: 300
-      });
-
+      const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
       canvas.toBlob(blob => {
         croppedBlob = blob;
         classifyImage();
@@ -156,37 +181,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     removeBtn.addEventListener('click', resetAll);
 
-    function resetAll() {
-      croppedBlob = null;
-      imageUpload.value = '';
-      uploadedImage.src = '';
-      uploadedImage.classList.add('hidden');
-      if (imagePlaceholder) imagePlaceholder.classList.remove('hidden');
-      cleanedPreview.src = '';
-      cleanedPreview.classList.add('hidden');
-      if (cleanedPlaceholder) cleanedPlaceholder.classList.remove('hidden'); // <-- Show placeholder
-      result.innerHTML = 'Prediction will appear here.';
-      heatmapImg.src = 'placeholder-heatmap.png';
-      heatmapPreview.classList.add('hidden');
-      aiInsight.innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
+    
+  function resetAll() {
+    croppedBlob = null;
+    imageUpload.value = '';
+    uploadedImage.src = '';
+    uploadedImage.classList.add('hidden');
+    imagePlaceholder.classList.remove('hidden');
+    rambutanCheck.textContent = '';
+    cleanedPreview.src = '';
+    cleanedPlaceholder.classList.remove('hidden');
+    cleanedPreview.classList.add('hidden');
+    result.innerHTML = 'Prediction will appear here.';
+    heatmapImg.src = 'placeholder-heatmap.png';
+    heatmapPreview.classList.add('hidden');
+    aiInsight.innerHTML = '<strong>AI Insight:</strong> Awaiting classification...';
+    cropBtn.disabled = false;
 
-      const sliderIDs = ['rottenSlider', 'ripeSlider', 'rawSlider', 'towardsdecaySlider', 'towardsripeSlider'];
-      sliderIDs.forEach(id => {
-        const slider = document.getElementById(id);
-        if (slider) {
-          slider.value = 0;
-          const label = slider.previousElementSibling;
-          if (label) label.innerText = label.innerText.split(':')[0] + ': 0%';
-        }
-      });
+    ['rottenSlider','ripeSlider','rawSlider','towardsdecaySlider','towardsripeSlider'].forEach(id => {
+      const s = document.getElementById(id);
+      const l = document.getElementById(id.replace('Slider','Label'));
+      if (s) s.value = 0;
+      if (l) l.innerText = l.id.replace('Label','').replace(/([A-Z])/g,' $1') + ': 0%';
+    });
 
-      if (cropper) {
-        cropper.destroy();
-        cropper = null;
-      }
-
-      cropBtn.disabled = false;
+    if (cropper) {
+      cropper.destroy();
+      cropper = null;
     }
+  }
+
 
     function updateSlidersAndInsights(probabilities) {
       const classMap = {
@@ -211,7 +235,27 @@ document.addEventListener('DOMContentLoaded', () => {
       const bestLabel = Object.keys(classMap)[maxIndex];
       const confidence = Math.round(probabilities[maxIndex] * 100);
 
-      aiInsight.innerHTML = `<strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> with <strong>${confidence}%</strong> confidence.`;
+      if (confidence < 70) {
+        aiInsight.innerHTML = `
+          <div style="font-size: 0.95em; line-height: 1.4;">
+            <strong>⚠️ AI Insight:</strong> Low confidence detected.<br>
+            It <em>might</em> be <strong>${bestLabel.replace('_', ' ')}</strong>, but only with <strong>${confidence}%</strong> certainty.<br><br>
+            📸 <strong>Tips for better results:</strong><br>
+            • Bright lighting<br>
+            • No blur / clear image<br>
+            • Crop to show just the fruit<br>
+            • Avoid messy backgrounds<br><br>
+            🧠 Help the AI help you!
+          </div>
+        `;
+      } else {
+        aiInsight.innerHTML = `
+          <div style="font-size: 1em;">
+            <strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> 
+            with <strong>${confidence}%</strong> confidence. ✅
+          </div>
+        `;
+      }
     }
   }
 });
