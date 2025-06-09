@@ -6,7 +6,7 @@
   <title>Rambutan Classifier</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
-  <style>
+ <style>
     .logout-btn {
       background: #e53935;
       color: #fff;
@@ -25,6 +25,109 @@
       background: #b71c1c;
       outline: 2px solid #b71c1c;
       outline-offset: 2px;
+    }
+
+    /* --- Improved details/summary triangle and dark mode --- */
+    details summary {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      color: #2f7044;
+      font-size: 1.08rem;
+      animation: fadeInDown 0.7s;
+      list-style: none;
+      background: none;
+      border-radius: 8px;
+      padding: 0.2em 0.5em;
+      transition: background 0.2s, color 0.2s;
+    }
+    details summary::-webkit-details-marker,
+    details summary::marker {
+      display: none;
+    }
+    .summary-title {
+      display: flex;
+      align-items: center;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: inherit;
+      margin-left: 0.2em;
+    }
+    details[open] summary,
+    details summary:focus {
+      background: #e3ffe7;
+      color: #388e3c;
+    }
+    details[open] summary::before,
+    details summary::before {
+      content: '';
+      display: inline-block;
+      width: 0.7em;
+      height: 0.7em;
+      margin-right: 0.6em;
+      border-style: solid;
+      border-width: 0.35em 0.35em 0 0;
+      border-color: #2f7044;
+      transform: rotate(45deg);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    details[open] summary::before {
+      transform: rotate(135deg);
+      border-color: #388e3c;
+    }
+
+    /* --- Dark mode for details/summary --- */
+    body.dark-mode details summary {
+      color: #ffe066;
+      background: #23272f;
+    }
+    body.dark-mode details ul,
+    body.dark-mode details li {
+      color: #ffffff !important;
+    }
+    body.dark-mode details strong {
+      color: #ffffff !important; /* Optional: make "Step 1" etc. stand out */
+    }
+    body.dark-mode details p {
+    color: #ffffff !important;
+    }
+    body.dark-mode details[open] summary,
+    body.dark-mode details summary:focus {
+      background: #2f7044;
+      color: #ffe066;
+    }
+    body.dark-mode details summary::before {
+      border-color: #ffe066;
+    }
+    body.dark-mode details[open] summary::before {
+      border-color: #ffe066;
+    }
+    body.dark-mode .how-section {
+      background: #23272f;
+      color: #ffe066;
+    }
+    body.dark-mode .how-section h1,
+    body.dark-mode .how-section h2 {
+      color: #ffe066;
+    }
+    body.dark-mode .intro {
+      color: #e0e0e0;
+    }
+    body.dark-mode ul {
+      color: #ffe066;
+    }
+    body.dark-mode .logout-btn {
+      background: #b71c1c;
+      color: #ffe066;
+      box-shadow: 0 2px 8px rgba(229,57,53,0.18);
+    }
+    body.dark-mode .logout-btn:hover,
+    body.dark-mode .logout-btn:focus {
+      background: #e53935;
+      color: #fff;
+      outline: 2px solid #ffe066;
+      
     }
   </style>
 </head>
@@ -47,35 +150,36 @@
 
   <!-- Main Content -->
   <main class="container how-section">
-    <h1>How RambutanAI Works</h1>
+  <h1>How RambutanAI Works</h1>
 
-    <p class="intro">
-      <strong>RambutanAI</strong> RambutanAI is an intelligent image-based system that uses a Convolutional Neural Network (CNN) to assess the current state of rambutan fruits—including their ripeness and overall health—based on visual features. Simply upload a photo, and the system provides instant feedback with visual explanations.
+  <p class="intro">
+    <strong>RambutanAI</strong> is an intelligent image-based system that uses a Convolutional Neural Network (CNN) to assess the current state of rambutan fruits—including their ripeness and overall health—based on visual features. Simply upload a photo, and the system provides instant feedback with visual explanations.
+  </p>
+
+  <details open>
+    <summary><span class="summary-title">Step-by-Step Process</span></summary>
+    <ul>
+      <li>📸 <strong>Step 1:</strong> Upload a clear photo of a rambutan fruit via the system interface.</li>
+      <li>🧠 <strong>Step 2:</strong> The AI removes the background and runs image analysis using a trained CNN model.</li>
+      <li>🔥 <strong>Step 3:</strong> A visual heatmap highlights which parts of the image influenced the model's decision.</li>
+      <li>📊 <strong>Step 4:</strong> You receive a predicted label (e.g., Ripe, Raw, Rotten) along with a confidence score.</li>
+      
+    </ul>
+  </details>
+
+  <details>
+    <summary><span class="summary-title">Tips for Best Results</span></summary>
+    <ul>
+      <li>✅ Use a plain or white background if possible (or let the app remove it automatically).</li>
+      <li>✅ Center the rambutan fruit and keep it well-lit.</li>
+      <li>✅ Avoid motion blur and background clutter.</li>
+      <li>✅ Capture images under natural lighting conditions when available.</li>
+    </ul>
+    <p>
+      Following these tips helps the AI model better focus on the fruit, increasing prediction accuracy and reliability.
     </p>
-
-    <details open>
-      <summary><h2>Step-by-Step Process</h2></summary>
-      <ul>
-        <li>📸 <strong>Step 1:</strong> Upload a clear photo of a rambutan fruit via the system interface.</li>
-        <li>🧠 <strong>Step 2:</strong> The AI removes the background and runs image analysis using a trained CNN model.</li>
-        <li>📊 <strong>Step 3:</strong> You receive a predicted label (e.g., Ripe, Raw, Rotten) along with a confidence score.</li>
-        <li>🔥 <strong>Step 4:</strong> A visual heatmap highlights which parts of the image influenced the model's decision.</li>
-      </ul>
-    </details>
-
-    <details>
-      <summary><h2>Tips for Best Results</h2></summary>
-      <ul>
-        <li>✅ Use a plain or white background if possible (or let the app remove it automatically).</li>
-        <li>✅ Center the rambutan fruit and keep it well-lit.</li>
-        <li>✅ Avoid motion blur and background clutter.</li>
-        <li>✅ Capture images under natural lighting conditions when available.</li>
-      </ul>
-      <p>
-        Following these tips helps the AI model better focus on the fruit, increasing prediction accuracy and reliability.
-      </p>
-    </details>
-  </main>
+  </details>
+</main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
   <script src="script.js"></script>

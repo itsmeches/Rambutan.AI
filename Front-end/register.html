@@ -9,7 +9,10 @@
   <style>
     body {
       font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-      background: linear-gradient(135deg, #e3ffe7 0%, #d9e7ff 100%);
+      background: 
+        linear-gradient(135deg, rgba(227,255,231,0.5) 0%, rgba(217,231,255,0.5) 100%),
+        url('medias/rambutan-bg.png') no-repeat center center fixed;
+      background-size: cover, cover;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -27,6 +30,7 @@
       position: relative;
       animation: fadeInDown 0.7s;
       box-sizing: border-box;
+      z-index: 1;
     }
     .register-logo {
       width: 70px;
@@ -129,6 +133,14 @@
       .register-container form {
         max-width: 100vw;
       }
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.25);
+      z-index: 0;
+      pointer-events: none;
     }
   </style>
 </head>

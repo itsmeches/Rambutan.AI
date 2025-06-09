@@ -8,23 +8,64 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet" />
   <style>
     .logout-btn {
-      background: #e53935;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 0.5rem 1.1rem;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-left: 1rem;
-      box-shadow: 0 2px 8px rgba(229,57,53,0.08);
+      background: #e53935 !important;
+      color: #fff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 0.5rem 1.1rem !important;
+      font-size: 1rem !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      transition: background 0.2s !important;
+      margin-left: 1rem !important;
+      box-shadow: 0 2px 8px rgba(229,57,53,0.08) !important;
     }
     .logout-btn:hover,
     .logout-btn:focus {
-      background: #b71c1c;
-      outline: 2px solid #b71c1c;
-      outline-offset: 2px;
+      background: #b71c1c !important;
+      outline: 2px solid #b71c1c !important;
+      outline-offset: 2px !important;
+    }
+
+    /* --- Dark mode for about section --- */
+    body.dark-mode .about-section {
+      background: #23272f !important;
+      color: #ffe066 !important;
+    }
+    body.dark-mode .about-section h1 {
+      color: #ffe066 !important;
+    }
+    body.dark-mode .about-section h2 {
+      color: #ffffff !important;
+    }
+    body.dark-mode .about-section .intro {
+      color: #e0e0e0 !important;
+    }
+    body.dark-mode .about-card {
+    background: #23272f !important;
+    color: #ffe066 !important; /* Make all text in about-card yellow by default */
+    }
+    body.dark-mode .about-card h2 {
+      color: #ffffff !important;
+    }
+    body.dark-mode .about-card p {
+      color: #ffe066 !important; /* Make all <p> in about-card yellow */
+    }
+    body.dark-mode .about-card ul,
+    body.dark-mode .about-card li {
+      color: #ffe066 !important;
+    }
+    /* Keep logout button red in dark mode */
+    body.dark-mode .logout-btn {
+      background: #e53935 !important;
+      color: #fff !important;
+      box-shadow: 0 2px 8px rgba(229,57,53,0.18) !important;
+    }
+    body.dark-mode .logout-btn:hover,
+    body.dark-mode .logout-btn:focus {
+      background: #b71c1c !important;
+      color: #fff !important;
+      outline: 2px solid #ffe066 !important;
     }
   </style>
 </head>
@@ -68,11 +109,12 @@
       </div>
 
       <div class="about-card">
-        <h2>🧠 Technologies We Use</h2>
+        <h2>🧠 Technologies</h2>
         <ul>
           <li>📚 Convolutional Neural Networks (CNN)</li>
           <li>⚙️ TensorFlow & Keras for deep learning</li>
           <li>🌐 HTML, CSS, JavaScript for the web interface</li>
+          <li>🌐 Python flask for the backend logics</li>
           <li>📷 Custom image processing techniques</li>
         </ul>
       </div>

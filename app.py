@@ -969,7 +969,7 @@ class_names = ['Rotten', 'Ripe', 'Raw', 'Towards_Decay', 'Towards_Ripe']
 def remove_background(image_bytes):
     url = "https://api.rembg.com/rmbg"
     headers = {
-        "x-api-key": os.getenv("REMBG_API_KEY", "70d943a9-621f-4107-a1e1-6d3f48901083")
+        "x-api-key": os.getenv("REMBG_API_KEY", "11861793-e96d-4fb3-8237-f55c2c375bb1")
     }
     files = {"image": ("uploaded_image.jpg", image_bytes, "image/jpeg")}
     response = requests.post(url, headers=headers, files=files)

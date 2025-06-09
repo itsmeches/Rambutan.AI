@@ -245,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
             • No blur / clear image<br>
             • Crop to show just the fruit<br>
             • Avoid messy backgrounds<br><br>
-            🧠 Help the AI help you!
           </div>
         `;
       } else {

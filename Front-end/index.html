@@ -31,6 +31,17 @@
       font-size: 1.1rem;
       font-weight: 600;
     }
+     #result {
+    color: #2f7044;
+    }
+    body.dark-mode .upload-label {
+      color: #fff !important;
+    }
+    body.dark-mode #result {
+      color:  #ffe066;
+    }
+
+
   </style>
 </head>
 <body>
@@ -55,7 +66,7 @@
     <section class="panel">
       <h2><span class="panel-icon">📤</span> 1. Upload Image</h2>
       <label class="upload-label" for="imageUpload">
-        <span class="upload-icon"></span> Choose Image
+        <span class="upload-icon">📁</span> Choose Image 
         <input type="file" id="imageUpload" accept="image/*" hidden />
       </label>
       <div class="image-preview" id="imagePreview">
@@ -69,7 +80,7 @@
       </div>
     </section>
     <section class="panel">
-      <h2><span class="panel-icon">✂️</span> 2. Cropped + Cleaned Image</h2>
+      <h2><span class="panel-icon">✂️</span> 2. Enhanced Image</h2>
       <div class="image-preview" id="cleanedPreviewContainer">
         <img id="cleanedPreview" class="hidden" alt="Cleaned Image Preview" />
         <span id="cleanedPlaceholder" class="placeholder-text">No cleaned image</span>
