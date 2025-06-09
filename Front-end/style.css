@@ -1505,3 +1505,35 @@ details[open] summary::before {
 body, .contact-section {
   overflow-y: auto !important;
 }
+
+
+.ai-insight {
+  font-size: 1em;
+  line-height: 1.5;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
+
+.high-confidence {
+  background-color: rgba(0, 128, 0, 0.05);
+  border: 1px solid #4caf50;
+}
+
+.low-confidence {
+  background-color: rgba(255, 204, 0, 0.05);
+  border: 1px solid #ff9800;
+}
+
+.reinforcement-message {
+  color: #2D5034; /* black for light mode */
+  display: inline-block;
+  margin-top: 8px;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .reinforcement-message {
+  color: #ffd700; /* yellow for dark mode */
+}
+

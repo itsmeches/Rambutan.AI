@@ -212,49 +212,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-    function updateSlidersAndInsights(probabilities) {
-      const classMap = {
-        Rotten: ['rottenSlider', 'rottenLabel'],
-        Ripe: ['ripeSlider', 'ripeLabel'],
-        Raw: ['rawSlider', 'rawLabel'],
-        Towards_Decay: ['towardsdecaySlider', 'towardsdecayLabel'],
-        Towards_Ripe: ['towardsripeSlider', 'towardsripeLabel']
-      };
+   function updateSlidersAndInsights(probabilities) {
+  const classMap = {
+    Rotten: ['rottenSlider', 'rottenLabel'],
+    Ripe: ['ripeSlider', 'ripeLabel'],
+    Raw: ['rawSlider', 'rawLabel'],
+    Towards_Decay: ['towardsdecaySlider', 'towardsdecayLabel'],
+    Towards_Ripe: ['towardsripeSlider', 'towardsripeLabel']
+  };
 
-      Object.entries(classMap).forEach(([label, [sliderId, labelId]], index) => {
-        const percent = Math.round(probabilities[index] * 100);
-        const slider = document.getElementById(sliderId);
-        const labelElem = document.getElementById(labelId);
-        if (slider && labelElem) {
-          slider.value = percent;
-          labelElem.innerText = `${label.replace('_', ' ')}: ${percent}%`;
-        }
-      });
+  const reinforcementMessages = {
+    Rotten: "It’s really getting spoiled!",
+    Ripe: "Wow! It’s perfectly ripe. Yum yum!",
+    Raw: "Still raw — needs more time!",
+    Towards_Decay: "Starting to decay. Use it soon!",
+    Towards_Ripe: "Almost ripe! Getting there!"
+  };
 
-      const maxIndex = probabilities.indexOf(Math.max(...probabilities));
-      const bestLabel = Object.keys(classMap)[maxIndex];
-      const confidence = Math.round(probabilities[maxIndex] * 100);
-
-      if (confidence < 70) {
-        aiInsight.innerHTML = `
-          <div style="font-size: 0.95em; line-height: 1.4;">
-            <strong>⚠️ AI Insight:</strong> Low confidence detected.<br>
-            It <em>might</em> be <strong>${bestLabel.replace('_', ' ')}</strong>, but only with <strong>${confidence}%</strong> certainty.<br><br>
-            📸 <strong>Tips for better results:</strong><br>
-            • Bright lighting<br>
-            • No blur / clear image<br>
-            • Crop to show just the fruit<br>
-            • Avoid messy backgrounds<br><br>
-          </div>
-        `;
-      } else {
-        aiInsight.innerHTML = `
-          <div style="font-size: 1em;">
-            <strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> 
-            with <strong>${confidence}%</strong> confidence. ✅
-          </div>
-        `;
-      }
+  Object.entries(classMap).forEach(([label, [sliderId, labelId]], index) => {
+    const percent = Math.round(probabilities[index] * 100);
+    const slider = document.getElementById(sliderId);
+    const labelElem = document.getElementById(labelId);
+    if (slider && labelElem) {
+      slider.value = percent;
+      labelElem.innerText = `${label.replace('_', ' ')}: ${percent}%`;
     }
+  });
+
+  const maxIndex = probabilities.indexOf(Math.max(...probabilities));
+  const bestLabel = Object.keys(classMap)[maxIndex];
+  const confidence = Math.round(probabilities[maxIndex] * 100);
+
+  if (confidence < 70) {
+    aiInsight.innerHTML = `
+      <div class="ai-insight low-confidence">
+        <strong>⚠️ AI Insight:</strong> Low confidence detected.<br>
+        It <em>might</em> be <strong>${bestLabel.replace('_', ' ')}</strong>, but only with <strong>${confidence}%</strong> certainty.<br><br>
+        📸 <strong>Tips for better results:</strong><br>
+        • Bright lighting<br>
+        • No blur / clear image<br>
+        • Crop to show just the fruit<br>
+        • Avoid messy backgrounds
+      </div>
+    `;
+  } else {
+    const reinforcement = reinforcementMessages[bestLabel] || '';
+    aiInsight.innerHTML = `
+      <div class="ai-insight high-confidence">
+        <strong>AI Insight:</strong> Most likely <strong>${bestLabel.replace('_', ' ')}</strong> 
+        with <strong>${confidence}%</strong> confidence. <br>
+        <span class="reinforcement-message">${reinforcement}</span>
+      </div>
+    `;
   }
+}
+
+  }
+
 });
