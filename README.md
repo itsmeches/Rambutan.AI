@@ -1,20 +1,29 @@
 # 🍈 RambutanAI
 
-A web-based tool for **Rambutan Fruit Classification** using a **Convolutional Neural Network (CNN)** model to detect **Whether The Uploaded image is a Rambutan or Not** and assess **Its state** base from uploaded Rambutan images.
+A web-based tool for **Rambutan Fruit Classification** using a **Convolutional Neural Network (CNN)** model to detect **whether the uploaded image is a Rambutan or not** and assess **its condition** based on visual input.
 
-This project is built using **Flask (Python)** for backend processing and **HTML/CSS/JS + Cropper.js** for the frontend.
+Built using **Flask (Python)** for backend processing and **HTML/CSS/JS** for the frontend.
 
+---
 
+## ⚖️ Ethical Use & Creative Encouragement
 
+> This project was developed as a reference and learning tool for understanding image classification with CNNs, image preprocessing, and web integration.
 
-🍈 RambutanAI
-A web-based tool for  using a Convolutional Neural Network (CNN) model to identify whether an uploaded image contains a Rambutan or Not Rambutan fruit.
+You're welcome to **study**, **fork**, and **learn from** this code—but please avoid copying it directly for submissions or evaluations. Instead, consider it a **starting point** to build and improve upon with your own features, models, or approaches.
 
-This project is built using Flask (Python) for backend image processing and prediction, and HTML/CSS/JS + Cropper.js for the interactive frontend.
+Here are a few ideas to make it your own:
+- Try different CNN architectures
+- Customize the frontend UX or UI
+- Enhance the classification logic
+- Add new features like bounding box or severity analysis
+
+Let's grow **together as developers**, not just repeat code.
 
 ---
 
 ## 📁 Project Structure
+...
 
 ```
 rambutanai/
